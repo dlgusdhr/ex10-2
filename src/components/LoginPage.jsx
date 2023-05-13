@@ -2,13 +2,13 @@ import React from 'react'
 import { useState } from 'react'
 import {Row, Col, Form, InputGroup, Card, Button} from 'react-bootstrap'
 import { app } from '../firebaseInit';
-import {getAuth, signInWithEmailAndPassword} from 'firebase/auth'
+import { getAuth, signInWithEmailAndPassword} from 'firebase/auth'
 import { Link } from 'react-router-dom'
 const LoginPage = ({history}) => {
     const [loading, setLoading] = useState(false);
     const auth=getAuth(app);
     const [form, setForm] = useState({
-        email:'pink@inha.com',
+        email:'hong@inha.com',
         password:'12345678'
     });
     const {email, password} = form;
@@ -23,6 +23,7 @@ const LoginPage = ({history}) => {
         signInWithEmailAndPassword(auth, email, password)
         .then(success=>{
             sessionStorage.setItem('email', email);
+            sessionStorage.setItem('uid', success.user.uid);
             setLoading(false);
             history.push('/');
         })
