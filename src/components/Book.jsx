@@ -2,16 +2,37 @@ import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import {Card} from 'react-bootstrap'
+import {withRouter} from 'react-router-dom'
+import { app } from '../firebaseInit'
+import { getDatabase, ref, set } from 'firebase/database';
+import moment from 'moment';
 
-const Book = ({book}) => {
+const Book = ({book, history}) => {
+    const db = getDatabase(app);
+    const uid=sessionStorage.getItem('uid');
     const [show, setShow] = useState(false);
-
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    const onCart = (book) =>{
+        if(uid){
+            if(window.confirm(book.title + ' 장바구니에 등록하실래요?')){
+                //장바구니등록
+                const date=moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+                set(ref(db, `cart/${uid}/${book.isbn}`),
+                    {...book, date:date});
+                alert('장바구니등록성공!');
+                handleClose();
+            }
+        }else{
+            sessionStorage.setItem('target', '/book');
+            history.push('/login');
+        }
+    }
+
     return (
         <>
-            <Button variant="primary btn-sm" onClick={handleShow}>
+            <Button variant="primary btn-sm w-100" onClick={handleShow}>
                 보기
             </Button>
 
@@ -35,6 +56,9 @@ const Book = ({book}) => {
                     </Card>
                 </Modal.Body>
                 <Modal.Footer>
+                    <Button 
+                        onClick={()=>onCart(book) }
+                        variant='success'>장바구니</Button>
                     <Button variant="secondary" onClick={handleClose}>
                         Close
                     </Button>
@@ -44,4 +68,4 @@ const Book = ({book}) => {
     )
 }
 
-export default Book
+export default  withRouter(Book)

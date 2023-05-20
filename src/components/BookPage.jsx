@@ -51,7 +51,7 @@ const BookPage = () => {
                 {list.map(book=>
                     <Col key={book.isbn} md={3} xs={6} className="my-2">
                         <Card>
-                            <Card.Body>
+                            <Card.Body className='text-center'>
                                 <img src={book.thumbnail}/>
                                 <div className='ellipsis'>{book.title}</div>
                                 <Book book={book}/>

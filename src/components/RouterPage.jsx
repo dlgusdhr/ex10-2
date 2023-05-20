@@ -12,10 +12,13 @@ import LocalPage from './LocalPage';
 import LoginPage from './LoginPage';
 import JoinPage from './JoinPage';
 import MyPage from './MyPage';
+import FavoritePage from './FavoritePage';
+import CartPage from './CartPage';
 
 const RouterPage = ({history}) => {
     const onLogout = () => {
-        sessionStorage.removeItem('email');
+        //sessionStorage.removeItem('email');
+        sessionStorage.clear();
         history.push('/');
     }
     return (
@@ -32,6 +35,12 @@ const RouterPage = ({history}) => {
                             <Link to="/">Home</Link>
                             <Link to="/book">도서검색</Link>
                             <Link to="/local">지역검색</Link>
+                            {sessionStorage.getItem('email') && 
+                                <>
+                                 <Link to="/favorite">즐겨찾기</Link>
+                                 <Link to="/cart">장바구니</Link>
+                                </> 
+                            }
                         </Nav>
                         <div>
                             {sessionStorage.getItem('email') ?
@@ -57,6 +66,8 @@ const RouterPage = ({history}) => {
                 <Route path="/login" component={LoginPage}/>
                 <Route path="/join" component={JoinPage}/>
                 <Route path="/mypage" component={MyPage}/>
+                <Route path="/favorite" component={FavoritePage}/>
+                <Route path="/cart" component={CartPage}/>
             </Switch>
         </>
     )
