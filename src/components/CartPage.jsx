@@ -4,6 +4,7 @@ import { app } from '../firebaseInit'
 import { getDatabase, ref, onValue, remove } from 'firebase/database'
 import { useState } from 'react'
 import { useEffect } from 'react'
+import Book from './Book'
 
 const CartPage = () => {
     const uid=sessionStorage.getItem('uid');
@@ -24,11 +25,18 @@ const CartPage = () => {
         });
     }
 
+    const onRemove = (key)=> {
+        if(window.confirm(key +'번 도서를 삭제하실래요?')){
+           remove(ref(db, `cart/${uid}/${key}`));
+           alert('장바구니삭제완료!');
+        }
+    }
+
     useEffect(()=>{
         getBooks();
     }, []);
 
-    if(loading) return <h1>로딩중......</h1>
+    if(loading) return <h1 className='my-5 text-center'>로딩중......</h1>
     return (
         <Row className='my-5'>
             <Col>
@@ -38,15 +46,22 @@ const CartPage = () => {
                         <tr>
                             <td>제목</td>
                             <td>가격</td>
+                            <td>보기</td>
+                            <td>삭제</td>
                         </tr>
                     </thead>
                     <tbody>
-                        {books.map(book=>{
+                        {books.map(book=>
                             <tr key={book.key}>
                                 <td>{book.title}</td>
                                 <td>{book.price}</td>
+                                <td><Book book={book}/> </td>
+                                <td>
+                                    <Button onClick={()=>onRemove(book.key)}
+                                        className='btn-sm' variant='danger'>삭제</Button>
+                                </td>
                             </tr>
-                        })}
+                        )}
                     </tbody>
                 </Table>
             </Col>

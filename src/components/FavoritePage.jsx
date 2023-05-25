@@ -41,7 +41,7 @@ const FavoritePage = () => {
         <Row className='my-5'>
             <Col>
                 <h1 className='text-center mb-5'>즐겨찾기</h1>
-                <Table style={{fontSize:'0.8rem'}}>
+                <Table>
                     <thead>
                         <tr>
                             <td>장소명</td>

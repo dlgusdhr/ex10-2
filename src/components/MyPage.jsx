@@ -3,11 +3,12 @@ import { useState } from 'react'
 import {Col, Row, Card, Form, InputGroup, Button} from 'react-bootstrap'
 import { app } from '../firebaseInit'
 import { getFirestore, doc, getDoc, setDoc} from 'firebase/firestore'
-
+import { getStorage, uploadBytes, ref, getDownloadURL,} from 'firebase/storage'
 const MyPage = () => {
     const [loading, setLoading] = useState(false);
     const uid=sessionStorage.getItem("uid");
     const db = getFirestore(app);
+    const storage=getStorage(app);
     const [image, setImage] = useState('https://via.placeholder.com/200x200');
     const [file, setFile] = useState(null);
 
@@ -30,16 +31,26 @@ const MyPage = () => {
         setFile(e.target.files[0]);
     }
     const getUser = async() => {
-        setLoading(true)
-        const user= await getDoc(doc(db, 'user', uid));
-        console.log(user.data());
+        setLoading(true);
+        const user= await getDoc(doc(db, 'users', uid));
+        //console.log(user.data());
+        if(user.data().photo) setImage(user.data().photo);
         setForm(user.data());
         setLoading(false);
     }
 
-    const onUpdate = () => {
+    const onUpdate = async() => {
         if(!window.confirm('수정된 내용을 저장하실래요?')) return;
-        setDoc(doc(db, 'user', uid), form);
+        setLoading(true);
+        if(file){
+            const snapshot = await uploadBytes(ref(storage,`/photo/${Date.now().jpg}`, file));
+            const url=await getDownloadURL(snapshot.ref);
+            await setDoc(doc(db, 'users', uid), {...form, photo:url });
+            setLoading(false);
+        }else{
+            await setDoc(doc(db, 'users', uid), form);
+            setLoading(false);
+        }  
     }
 
     useEffect(()=>{
@@ -55,7 +66,7 @@ const MyPage = () => {
                     <Form>
                         <InputGroup className='my-2'>
                             <InputGroup.Text className='px-5'>메일</InputGroup.Text>
-                            <Form.Control readOnly
+                            <Form.Control readOnly name="email"
                                 value={sessionStorage.getItem('email')}/>
                         </InputGroup>
                         <InputGroup className='my-2'>
