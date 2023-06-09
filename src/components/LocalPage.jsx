@@ -20,7 +20,7 @@ const LocalPage = ({history}) => {
     const getLocal = async () => {
         const url = "https://dapi.kakao.com/v2/local/search/keyword.json";
         const config = {
-            headers: { "Authorization": "KakaoAK b80880fbde422de3fd9b4a4e67c9bb54" },
+            headers: { "Authorization": "KakaoAK 7acccc029182f882919d32c390912d19" },
             params: { query: query, page: page, size: 5 }
         }
         const result = await axios.get(url, config);
